@@ -56,4 +56,25 @@ jobs:
           sudo apt-get install -y ansible
 
       - name: Deploy using Ansible
-        run: ansible-playbook ansible/deploy.yaml -i ansible/inventory
+        run: ansible-playbook ansible/deploy.yaml -i ansible/inventory   
+
+      - name: Verify and display application status
+        run: |
+                echo "=== Kubernetes Resources ==="
+                  kubectl get all
+    
+                echo "=== Application Pod Details ==="
+                kubectl describe pod -l app=sample-app
+    
+                   echo "=== Application Logs ==="
+                  kubectl logs -l app=sample-app
+    
+                   echo "=== Service Access Information ==="
+                   minikube service list
+    
+                      # Get the application URL
+                     APP_URL=$(minikube service sample-app-service --url)
+                     echo "Application is accessible at: $APP_URL"
+                      echo "You can test with: curl $APP_URL"
+
+        
