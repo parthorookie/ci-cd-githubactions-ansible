@@ -1,9 +1,10 @@
-- name: Deploy to Minikube
+---
+- name: Deploy to Kubernetes
   hosts: localhost
   connection: local
+  tasks:
+    - name: Apply Kubernetes Deployment
+      command: kubectl apply -f ../k8s/deployment.yaml --validate=false
 
-- name: Apply Deployment without validation 
-  command: kubectl apply -f ../k8s/deployment.yaml --validate=false
-
-- name: Apply Service  without validation
-  command: kubectl apply -f ../k8s/service.yaml --validate=false
+    - name: Apply Kubernetes Service
+      command: kubectl apply -f ../k8s/service.yaml --validate=false
