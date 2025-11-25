@@ -13,11 +13,11 @@ spec:
         app: sample-app
     spec:
       containers:
-        - name: sample-app
-          image: ghcr.io/${{ github.repository_owner }}/sample-app:latest
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8080
-          env:
-            - name: NODE_ENV
-              value: "production"
+      - name: sample-app
+        image: ghcr.io/parthorookie/sample-app:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: NODE_ENV
+          value: "production"
