@@ -2,9 +2,8 @@
   hosts: localhost
   connection: local
 
-  tasks:
-    - name: Apply Deployment without validation
-      command: kubectl apply -f ../k8s/deployment.yaml **--validate=false**
+- name: Apply Deployment
+  command: kubectl apply -f ../k8s/deployment.yaml --validate=false
 
-    - name: Apply Service
-      command: kubectl apply -f ../k8s/service.yaml
+- name: Apply Service  
+  command: kubectl apply -f ../k8s/service.yaml --validate=false
