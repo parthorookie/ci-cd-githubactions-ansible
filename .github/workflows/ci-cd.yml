@@ -63,14 +63,6 @@ jobs:
 
       - name: Verify deployment
         run: |
-          echo "=== Waiting for application to be ready ==="
-          kubectl wait --for=condition=ready pod -l app=sample-app --timeout=120s
-          
-          echo "=== Kubernetes Resources ==="
-          kubectl get all
-          
-          echo "=== Application Logs ==="
-          kubectl logs -l app=sample-app
           
           echo "=== Service Access ==="
           minikube service sample-app-service --url
