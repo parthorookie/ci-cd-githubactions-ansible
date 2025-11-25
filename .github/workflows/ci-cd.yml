@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Use GitHub hosted runner
 
     steps:
       - name: Checkout repository
@@ -15,21 +15,24 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y conntrack curl
+          sudo apt-get install -y conntrack
 
       - name: Install kubectl
         run: |
           curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
           sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          kubectl version --client
 
       - name: Install Minikube
         run: |
           curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
           sudo install minikube-linux-amd64 /usr/local/bin/minikube
+          minikube version
 
       - name: Start Minikube cluster
         run: |
           minikube start --driver=docker
+          minikube status
           kubectl get nodes
 
       - name: Log in to GitHub Container Registry
@@ -42,17 +45,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ghcr.io/${{ github.repository_owner }}/sample-app:latest ./app
+          docker images
 
       - name: Push Docker image to GHCR
         run: |
           docker push ghcr.io/${{ github.repository_owner }}/sample-app:latest
-
-      - name: Update deployment with actual image
-        run: |
-          # Replace the placeholder with actual image name
-          sed -i "s|IMAGE_PLACEHOLDER|ghcr.io/${{ github.repository_owner }}/sample-app:latest|g" k8s/deployment.yaml
-          # Verify the replacement worked
-          cat k8s/deployment.yaml | grep image:
 
       - name: Install Ansible
         run: |
@@ -61,8 +58,5 @@ jobs:
       - name: Deploy using Ansible
         run: ansible-playbook ansible/deploy.yaml -i ansible/inventory
 
-      - name: Verify deployment
-        run: |
-          
-          echo "=== Service Access ==="
-          minikube service sample-app-service --url
+
+
