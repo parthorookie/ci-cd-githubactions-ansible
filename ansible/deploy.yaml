@@ -3,8 +3,45 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Apply Kubernetes Deployment without Validation
-      command: kubectl apply -f ../k8s/deployment.yaml --validate=false
+    - name: Check Minikube status
+      command: minikube status
+      register: minikube_status
+      changed_when: false
 
-    - name: Apply Kubernetes Service without Validation
+    - name: Debug Minikube status
+      debug:
+        var: minikube_status.stdout
+
+    - name: Set Minikube context
+      command: kubectl config use-context minikube
+
+    - name: Verify Kubernetes connection
+      command: kubectl get nodes
+      register: k8s_connection
+      changed_when: false
+
+    - name: Debug Kubernetes connection
+      debug:
+        var: k8s_connection.stdout
+
+    - name: Check if deployment file exists
+      stat:
+        path: ../k8s/deployment.yaml
+      register: deployment_file
+
+    - name: Debug deployment file
+      debug:
+        var: deployment_file.stat.exists
+
+    - name: Apply Kubernetes Deployment
+      command: kubectl apply -f ../k8s/deployment.yaml --validate=false
+      when: deployment_file.stat.exists
+
+    - name: Check if service file exists
+      stat:
+        path: ../k8s/service.yaml
+      register: service_file
+
+    - name: Apply Kubernetes Service
       command: kubectl apply -f ../k8s/service.yaml --validate=false
+      when: service_file.stat.exists
