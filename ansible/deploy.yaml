@@ -1,11 +1,10 @@
----
 - name: Deploy to Minikube
-  hosts: servers
+  hosts: localhost
   connection: local
 
   tasks:
     - name: Apply Deployment
-      command: kubectl apply -f k8s/deployment.yaml
+      command: kubectl apply -f ../k8s/deployment.yaml
 
     - name: Apply Service
-      command: kubectl apply -f k8s/service.yaml
+      command: kubectl apply -f ../k8s/service.yaml
